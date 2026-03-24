@@ -1,162 +1,124 @@
-# 🚀 Next.js 2026: High-Performance VM Architecture
+# 🚀 Next.js Debian 12 Dev-Workspace
 
-This guide outlines a professional, production-ready architecture for running Next.js on a Debian-based Virtual Machine. It prioritizes the **Rust-based toolchain**, memory efficiency, and modern security standards.
+A modular, high-performance automation suite for provisioning a professional development environment on **Debian 12 (Bookworm)**. This stack is optimized for **Next.js 15+**, utilizing **fnm**, **pnpm**, and **Turbopack**.
 
 ---
 
-## 🏗 System Architecture Overview
+## 🏗️ Architecture Overview
 
-The following diagram illustrates the flow from the OS layer up to the Next.js application layer.
+This workspace moves away from "monolithic" install scripts. By using a modular architecture, you can update individual components (like Node.js versions or Firewall rules) without re-running the entire suite.
 
-```mermaid
-graph TD
-    subgraph OS_Layer [Debian Base]
-        A[UFW Firewall] --> B[Build Essentials]
-        B --> C[inotify Limits]
-    }
-    
-    subgraph Runtime_Layer [Node.js Environment]
-        D[fnm - Fast Node Manager] --> E[Node.js LTS]
-        E --> F[pnpm - Package Manager]
-    }
-    
-    subgraph App_Layer [Next.js Workspace]
-        G[Turbopack] --> H[App Router]
-        H --> I[Tailwind / TS]
-    }
+- **OS:** Debian 12 (Stable)
+- **Version Manager:** `fnm` (Fast Node Manager) — *Built in Rust for maximum speed.*
+- **Package Manager:** `pnpm` — *Utilizes content-addressable storage to save VM disk space.*
+- **Performance:** Optimized `inotify` limits to prevent HMR crashes in large projects.
+- **Security:** `UFW` pre-configured for SSH (22) and Next.js (3000).
 
-    C -.-> G
-    F --> G
+---
 
------
+## 📋 Prerequisites
 
-# 🛠 1. System Preparation
+- A cloud or local VM running **Debian 12**.
+- A user account with `sudo` privileges.
+- All `.sh` files from this repository stored in the same directory.
 
-Before installing Node-specific tools, ensure your Debian base is secure and equipped with essential build tools.
-Update & Essential Tools
+---
 
-Next.js and packages like sharp require native compilation tools.
+## ⚡ Quick Start
+
+### 1. Prepare the files
+Clone this set of scripts to your VM and ensure they are executable:
+
+```bash
+chmod +x *.sh
+```
+
+# 2. Run the Master Installer
+
+Execute the interactive controller to begin the setup:
 ```
 Bash
 
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y build-essential curl git wget procps libssl-dev htop
+./setup-workspace.sh
 ```
 
-Firewall Configuration
+Choose Option 1 for the full recommended installation.
 
-Allow only necessary ports (SSH: 22, Next.js Dev: 3000).
+## 3. Refresh Environment
 
-```
-Bash
-
-sudo ufw allow 22/tcp
-sudo ufw allow 3000/tcp
-sudo ufw enable
-```
-
------
-
-# ⚡ 2. The Rust Toolchain (fnm & pnpm)
-
-Avoid sudo apt install nodejs. Use fnm (Fast Node Manager) for speed and pnpm for disk efficiency.
-Install fnm
+Once the script completes, refresh your shell to activate fnm and pnpm:
 
 ```
 Bash
 
-curl -fsSL [https://fnm.vercel.app/install](https://fnm.vercel.app/install) | bash
-# Restart shell or run:
 source ~/.bashrc
 ```
 
-Install Node.js LTS
+## 📂 Script Directory
+
+File	Function
+- setup-workspace.sh	The Controller. Provides the TUI menu and coordinates execution.
+- prepare-sys.sh	Updates OS and configures the UFW firewall.
+- install-node.sh	Installs fnm, Node.js LTS, and configures shell profiles.
+- setup-pnpm.sh	Enables corepack and activates the pnpm manager.
+- linux-kernel-opt.sh	Increases file watcher limits and installs htop.
+- check-health.sh	Diagnostic Tool. Verifies all systems are GO after installation.
+
+## 🩺 Post-Installation Health Check
+
+After running the setup, it is a best practice to run the health check to verify the environment's integrity:
 
 ```
 Bash
 
-fnm install --lts
-fnm use lts-latest
-# Verify: node -v (Should be >= v20.9.0)
+./check-health.sh
 ```
 
-Enable pnpm
+## 💡 Pro-Tips for Developers
 
-```
-Bash
+Creating a Project
 
-corepack enable
-corepack prepare pnpm@latest --activate
-```
-
------
-
-# 🚀 3. Initializing the Workspace
-
-Leverage Turbopack and the App Router for the best development experience in 2026.
+We recommend using the pnpm initializer for the best experience on Linux VMs:
 
 ```
 Bash
 
-pnpm create next-app@latest my-project
+pnpm create next-app@latest
 ```
 
-Recommended Configs
-Feature	Choice	Why?
-TypeScript	Yes	Essential for type safety and autocompletion.
-Tailwind CSS	Yes	Industry standard for rapid, scalable UI.
-App Router	Yes	Required for Server Components and modern fetching.
-Turbopack	Yes	Significantly faster HMR (Hot Module Replacement).
+### Recommended Setup Selections
 
------
+Prompt	Recommendation	Why?
+- TypeScript	Yes	Essential for 2026 type safety.
+- ESLint	Yes	Keeps code clean and catches errors early.
+- Tailwind CSS	Yes	Industry standard for rapid UI development.
+- App Router	Yes	Required for modern React Server Components.
+- Turbopack	Yes	Significantly faster HMR (Hot Module Replacement).
+- Performance Monitoring
 
-
-# 🧪 4. VM Performance Optimizations
-
-Increase File Watcher Limits
-
-Large Next.js projects can exceed default Linux limits, causing the dev server to crash.
+** Keep an eye on your VM's RAM and CPU usage during builds using: **
 
 ```
 Bash
 
-echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+htop
 ```
 
-Process Management
+## 🛠️ Maintenance
 
-Use PM2 to keep your development server or internal tools running in the background.
+    - To update Node.js: fnm install latest && fnm use latest
 
-```
-Bash
+    - To clear pnpm cache: pnpm store prune
 
-pnpm add -g pm2
-pm2 start npm --name "next-app" -- run dev
+    - To check Firewall: sudo ufw status
 
------
+## ⚖️ Disclaimer
 
-# 🔐 5. Secure Workflow
+**This repository is provided for educational and transformational purposes only.** The scripts and documentation contained herein are designed to assist **Node.js/Next.js developers** in establishing a secure and optimized development environment using **Linux Debian 12 (Bookworm)**. 
 
-    SSH Keys: Always use SSH keys for GitHub/GitLab to avoid password prompts.
+### 🛡️ Use at Your Own Risk
+* **No Warranty:** The software is provided "as is", without warranty of any kind, express or implied. The author(s) make no guarantees regarding the stability, security, or suitability of these scripts for your specific hardware or use case.
+* **Limitation of Liability:** In no event shall the author(s) or copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
+* **Responsibility:** By executing these scripts, you acknowledge that you are responsible for maintaining your own backups and system security. The author(s) are not responsible for any data loss, system downtime, or security vulnerabilities that may occur.
 
-    Environment: Use .env.local for VM-specific secrets. Never commit this to Git.
-
-    Housekeeping: Periodically run pnpm store prune to reclaim disk space.
-
-#Disclaimer
-
-Use of AI-Generated Content
-This guide was developed with the assistance of Artificial Intelligence. While every effort has been made to ensure the technical accuracy and relevance of the configurations provided, users are advised that technology standards, security vulnerabilities, and software versions evolve rapidly.
-
-Limitation of Liability
-The author and contributors of this repository provide this information "as is" without any express or implied warranties. By using this guide, you acknowledge and agree that:
-
-    Implementation Risk: You are solely responsible for the implementation, testing, and maintenance of the configurations within your own environment.
-
-    System Impact: The author is not responsible for any system instability, data loss, security breaches, or hardware issues that may arise from following these instructions.
-
-    No Professional Advice: This guide is intended for educational and informational purposes and does not constitute professional systems administration or cybersecurity advice.
-
-Users are strongly encouraged to test these configurations in a non-production environment before deploying them to live systems.
-
------
+**Always review the code within each `.sh` file before executing it on your system.**
