@@ -88,14 +88,6 @@ pnpm create next-app@latest
 
 ### Recommended Setup Selections
 
-Prompt	Recommendation	Why?
-- TypeScript	Yes	Essential for 2026 type safety.
-- ESLint	Yes	Keeps code clean and catches errors early.
-- Tailwind CSS	Yes	Industry standard for rapid UI development.
-- App Router	Yes	Required for modern React Server Components.
-- Turbopack	Yes	Significantly faster HMR (Hot Module Replacement).
-- Performance Monitoring
-
 ** Keep an eye on your VM's RAM and CPU usage during builds using: **
 
 ```
@@ -103,6 +95,18 @@ Bash
 
 htop
 ```
+#### How to leverage AI to maintain this script.
+
+** Use these concepts to prompt AI. Share the scripts with AI to ensure future best practice. **
+
+Key Concepts to Consider: 
+Prompt	        Recommendation	Why?
+TypeScript	    Yes	            Essential for 2026 type safety.
+ESLint	        Yes	            Keeps code clean and catches errors early.
+Tailwind CSS	Yes	            Industry standard for rapid UI development.
+App Router	    Yes	            Required for modern React Server Components.
+Turbopack	    Yes	            Significantly faster HMR (Hot Module Replacement).
+Performance Monitoring
 
 ## 🛠️ Maintenance
 
