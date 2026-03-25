@@ -14,6 +14,7 @@ prepare_system() {
         curl \
         git \
         wget \
+	unzip \
         procps \
         libssl-dev \
         ufw
