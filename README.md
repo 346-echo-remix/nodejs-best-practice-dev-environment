@@ -126,3 +126,12 @@ Performance Monitoring
 * **Responsibility:** By executing these scripts, you acknowledge that you are responsible for maintaining your own backups and system security. The author(s) are not responsible for any data loss, system downtime, or security vulnerabilities that may occur.
 
 **Always review the code within each `.sh` file before executing it on your system.**
+
+### Extra Features
+
+    Installation of gcloud and terraform.
+    - 'install-gcloud-terraform.sh' works but it's not a smart script. It just basically installs them according to google instructions.
+
+### Known Bugs
+
+ - Corepack does not execute due to the improper directory traverse for the binary. This can be "hacked" pretty easily, but there should be a more efficient way to do this with shell control.
